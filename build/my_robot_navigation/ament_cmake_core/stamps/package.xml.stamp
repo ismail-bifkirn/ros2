@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="3">
+  <n>my_robot_navigation</n>
+  <version>1.0.0</version>
+  <description>Navigation Nav2 + SLAM pour le robot 4 roues</description>
+
+  <maintainer email="etudiant@university.ma">Votre Nom</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>navigation2</depend>
+  <depend>nav2_bringup</depend>
+  <depend>slam_toolbox</depend>
+  <depend>my_robot_simulation</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

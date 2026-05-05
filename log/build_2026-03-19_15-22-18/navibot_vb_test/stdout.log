@@ -1,0 +1,39 @@
+running egg_info
+creating ../../build/navibot_vb_test/navibot_vb_test.egg-info
+writing ../../build/navibot_vb_test/navibot_vb_test.egg-info/PKG-INFO
+writing dependency_links to ../../build/navibot_vb_test/navibot_vb_test.egg-info/dependency_links.txt
+writing entry points to ../../build/navibot_vb_test/navibot_vb_test.egg-info/entry_points.txt
+writing requirements to ../../build/navibot_vb_test/navibot_vb_test.egg-info/requires.txt
+writing top-level names to ../../build/navibot_vb_test/navibot_vb_test.egg-info/top_level.txt
+writing manifest file '../../build/navibot_vb_test/navibot_vb_test.egg-info/SOURCES.txt'
+reading manifest file '../../build/navibot_vb_test/navibot_vb_test.egg-info/SOURCES.txt'
+writing manifest file '../../build/navibot_vb_test/navibot_vb_test.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/ismail/ros2_ws/build/navibot_vb_test/build
+creating /home/ismail/ros2_ws/build/navibot_vb_test/build/lib
+creating /home/ismail/ros2_ws/build/navibot_vb_test/build/lib/navibot_vb_test
+copying navibot_vb_test/__init__.py -> /home/ismail/ros2_ws/build/navibot_vb_test/build/lib/navibot_vb_test
+running install
+running install_lib
+creating /home/ismail/ros2_ws/install/navibot_vb_test/lib/python3.10/site-packages/navibot_vb_test
+copying /home/ismail/ros2_ws/build/navibot_vb_test/build/lib/navibot_vb_test/__init__.py -> /home/ismail/ros2_ws/install/navibot_vb_test/lib/python3.10/site-packages/navibot_vb_test
+byte-compiling /home/ismail/ros2_ws/install/navibot_vb_test/lib/python3.10/site-packages/navibot_vb_test/__init__.py to __init__.cpython-310.pyc
+running install_data
+creating /home/ismail/ros2_ws/install/navibot_vb_test/share/ament_index
+creating /home/ismail/ros2_ws/install/navibot_vb_test/share/ament_index/resource_index
+creating /home/ismail/ros2_ws/install/navibot_vb_test/share/ament_index/resource_index/packages
+copying resource/navibot_vb_test -> /home/ismail/ros2_ws/install/navibot_vb_test/share/ament_index/resource_index/packages
+copying package.xml -> /home/ismail/ros2_ws/install/navibot_vb_test/share/navibot_vb_test
+creating /home/ismail/ros2_ws/install/navibot_vb_test/share/navibot_vb_test/launch
+copying launch/gazebo.launch.py -> /home/ismail/ros2_ws/install/navibot_vb_test/share/navibot_vb_test/launch
+creating /home/ismail/ros2_ws/install/navibot_vb_test/share/navibot_vb_test/urdf
+copying urdf/robot.urdf.xacro -> /home/ismail/ros2_ws/install/navibot_vb_test/share/navibot_vb_test/urdf
+creating /home/ismail/ros2_ws/install/navibot_vb_test/share/navibot_vb_test/worlds
+copying worlds/lidar_world.sdf -> /home/ismail/ros2_ws/install/navibot_vb_test/share/navibot_vb_test/worlds
+creating /home/ismail/ros2_ws/install/navibot_vb_test/share/navibot_vb_test/config
+copying config/controllers.yaml -> /home/ismail/ros2_ws/install/navibot_vb_test/share/navibot_vb_test/config
+running install_egg_info
+Copying ../../build/navibot_vb_test/navibot_vb_test.egg-info to /home/ismail/ros2_ws/install/navibot_vb_test/lib/python3.10/site-packages/navibot_vb_test-0.0.0-py3.10.egg-info
+running install_scripts
+writing list of installed files to '/home/ismail/ros2_ws/build/navibot_vb_test/install.log'

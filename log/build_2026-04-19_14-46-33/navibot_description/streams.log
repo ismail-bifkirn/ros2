@@ -1,0 +1,21 @@
+[0.574s] Invoking command in '/home/ismail/ros2_ws/src/navibot_description': PYTHONPATH=/home/ismail/ros2_ws/build/navibot_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ismail/ros2_ws/install/navibot_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/navibot_description build --build-base /home/ismail/ros2_ws/build/navibot_description/build install --record /home/ismail/ros2_ws/build/navibot_description/install.log --single-version-externally-managed install_data
+[0.794s] running egg_info
+[0.794s] writing ../../build/navibot_description/navibot_description.egg-info/PKG-INFO
+[0.795s] writing dependency_links to ../../build/navibot_description/navibot_description.egg-info/dependency_links.txt
+[0.795s] writing entry points to ../../build/navibot_description/navibot_description.egg-info/entry_points.txt
+[0.795s] writing requirements to ../../build/navibot_description/navibot_description.egg-info/requires.txt
+[0.795s] writing top-level names to ../../build/navibot_description/navibot_description.egg-info/top_level.txt
+[0.797s] reading manifest file '../../build/navibot_description/navibot_description.egg-info/SOURCES.txt'
+[0.798s] writing manifest file '../../build/navibot_description/navibot_description.egg-info/SOURCES.txt'
+[0.798s] running build
+[0.798s] running build_py
+[0.798s] running install
+[0.798s] running install_lib
+[0.799s] running install_data
+[0.800s] copying config/nav2_params.yaml -> /home/ismail/ros2_ws/install/navibot_description/share/navibot_description/config
+[0.800s] running install_egg_info
+[0.801s] removing '/home/ismail/ros2_ws/install/navibot_description/lib/python3.10/site-packages/navibot_description-0.0.0-py3.10.egg-info' (and everything under it)
+[0.802s] Copying ../../build/navibot_description/navibot_description.egg-info to /home/ismail/ros2_ws/install/navibot_description/lib/python3.10/site-packages/navibot_description-0.0.0-py3.10.egg-info
+[0.802s] running install_scripts
+[0.820s] writing list of installed files to '/home/ismail/ros2_ws/build/navibot_description/install.log'
+[0.854s] Invoked command in '/home/ismail/ros2_ws/src/navibot_description' returned '0': PYTHONPATH=/home/ismail/ros2_ws/build/navibot_description/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ismail/ros2_ws/install/navibot_description/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/navibot_description build --build-base /home/ismail/ros2_ws/build/navibot_description/build install --record /home/ismail/ros2_ws/build/navibot_description/install.log --single-version-externally-managed install_data

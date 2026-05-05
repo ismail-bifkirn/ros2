@@ -1,0 +1,1 @@
+Invoking command in '/home/ismail/ros2_ws/build/my_robot_navigation': /usr/bin/cmake /home/ismail/ros2_ws/src/my_robot_navigation -DCMAKE_INSTALL_PREFIX=/home/ismail/ros2_ws/install/my_robot_navigation
