@@ -44,6 +44,15 @@ def generate_launch_description():
     # On override pour ne lister que les modèles du monde hospital.
     gazebo_model_path = f"{models_dir}:{fuel_models_dir}"
 
+    # ON MUSCLE: en plus de SetEnvironmentVariable (qui agit au niveau
+    # des actions launch), on écrase aussi os.environ au moment du parse.
+    # Cela garantit que les sous-processus lancés via IncludeLaunchDescription
+    # (notamment gazebo_ros/launch/gazebo.launch.py) héritent du chemin
+    # propre, sans laisser le temps à un hook ROS de réinjecter
+    # turtlebot3_*. SetEnvironmentVariable est conservé en ceinture+
+    # bretelles pour les futurs subprocesses.
+    os.environ['GAZEBO_MODEL_PATH'] = gazebo_model_path
+
     # =====================================================================
     # 2. PROCESSUS URDF/XACRO
     # =====================================================================
