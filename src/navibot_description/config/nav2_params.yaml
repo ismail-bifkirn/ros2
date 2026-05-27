@@ -98,9 +98,9 @@ local_costmap:
         z_voxels: 16
         max_obstacle_height: 2.0
         mark_threshold: 0
-        observation_sources: scan scan_3d
-        scan_3d:
-          topic: /scan_3d
+        observation_sources: scan scan_tilted
+        scan_tilted:
+          topic: /scan_tilted
           max_obstacle_height: 2.0
           clearing: false
           marking: true

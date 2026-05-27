@@ -111,27 +111,30 @@
     <origin xyz="0 0 0" rpy="-${pi/2} 0 -${pi/2}"/>
   </joint>
 
-  <!-- ⭐ NOUVEAU : 3. LIDAR 3D ANTICOLISION (Rehaussé, inclinaison légère) ⭐ -->
-<link name="lidar_3d_link">
-  <visual>
-    <geometry><cylinder radius="0.04" length="0.05"/></geometry>
-    <material name="red"/>
-  </visual>
-  <collision>
-    <geometry><cylinder radius="0.04" length="0.05"/></geometry>
-  </collision>
-  <inertial>
-    <mass value="0.1"/>
-    <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
-  </inertial>
-</link>
+  <!-- 3. LIDAR 2D INCLINÉ — Anti-collision pour obstacles bas en avant -->
+  <!-- NB: ce capteur est un LaserScan 2D (un seul plan), pas un LiDAR 3D. -->
+  <link name="tilted_lidar_link">
+    <visual>
+      <geometry><cylinder radius="0.04" length="0.05"/></geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.04" length="0.05"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+  </link>
 
-<joint name="lidar_3d_joint" type="fixed">
-  <parent link="base_link"/>
-  <child link="lidar_3d_link"/>
-  <!-- Position: avant du robot, centré, hauteur 0.2 m, inclinaison -0.1 rad (≈ -5.7°) -->
-  <origin xyz="${base_length/2 + 0.05} 0 0.2" rpy="-0.1 0 0"/>
-</joint>
+  <joint name="tilted_lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="tilted_lidar_link"/>
+    <!-- Position: avant du robot, centré, hauteur 0.2 m.
+         Inclinaison: PITCH de -0.1 rad (≈ -5.7°) pour pointer vers le sol
+         devant le robot (axe Y = pitch, PAS roll). -->
+    <origin xyz="${base_length/2 + 0.05} 0 0.2" rpy="0 -0.1 0"/>
+  </joint>
 
   <!-- 4. IMU -->
   <link name="imu_link">
@@ -227,9 +230,9 @@
     </sensor>
   </gazebo>
 
-  <!-- ⭐ LiDAR 3D Anticollision Plugin (Demi-cercule vers le bas) ⭐ -->
-  <gazebo reference="lidar_3d_link">
-    <sensor type="ray" name="laser_3d">
+  <!-- LiDAR 2D INCLINÉ — demi-cercle avant pour anticollision basse -->
+  <gazebo reference="tilted_lidar_link">
+    <sensor type="ray" name="tilted_laser">
       <pose>0 0 0 0 0 0</pose>
       <visualize>true</visualize>
       <update_rate>10</update_rate>
@@ -253,12 +256,12 @@
           <stddev>0.01</stddev>
         </noise>
       </ray>
-      <plugin name="scan_plugin_3d" filename="libgazebo_ros_ray_sensor.so">
+      <plugin name="tilted_scan_plugin" filename="libgazebo_ros_ray_sensor.so">
         <ros>
-          <remapping>~/out:=/scan_3d</remapping>
+          <remapping>~/out:=/scan_tilted</remapping>
         </ros>
         <output_type>sensor_msgs/LaserScan</output_type>
-        <frame_name>lidar_3d_link</frame_name>
+        <frame_name>tilted_lidar_link</frame_name>
       </plugin>
     </sensor>
   </gazebo>
