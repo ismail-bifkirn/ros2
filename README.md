@@ -103,12 +103,12 @@ source install/setup.bash
 ros2 launch navibot_description nav2.launch.py
 ```
 
-Dans RViz :
+La pose initiale est déjà fixée dans `config/nav2_params.yaml`
+(`amcl.set_initial_pose: true`, x=5.0, y=3.0) et correspond à la position
+de spawn du robot. Aucun **2D Pose Estimate** manuel n'est nécessaire.
 
-1. Cliquer sur **2D Pose Estimate** et placer la pose initiale du robot
-   sur la carte (l'AMCL en a besoin pour converger).
-2. Cliquer sur **2D Goal Pose** pour fixer une destination ; le robot
-   doit planifier et exécuter une trajectoire.
+Dans RViz, cliquer directement sur **2D Goal Pose** pour fixer une
+destination ; le robot doit planifier et exécuter une trajectoire.
 
 ### Construire une carte (SLAM)
 
