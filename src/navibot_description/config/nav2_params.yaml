@@ -43,15 +43,18 @@ controller_server:
     general_goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.25
-      yaw_goal_tolerance: 0.25
+      # Tolérance yaw resserrée (0.25 rad ~ 14°, trop laxiste pour
+      # un robot d'hôpital qui doit s'aligner avec un couloir)
+      yaw_goal_tolerance: 0.15
       stateful: True
 
     FollowPath:
       plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
       desired_linear_vel: 0.26
-      lookahead_dist: 1.2
-      min_lookahead_dist: 0.6
-      max_lookahead_dist: 1.5
+      # Lookahead réduit pour mieux suivre les couloirs étroits d'hôpital
+      lookahead_dist: 0.8
+      min_lookahead_dist: 0.4
+      max_lookahead_dist: 1.2
       use_velocity_scaled_lookahead_dist: true
       min_approach_linear_velocity: 0.05
       approach_velocity_scaling_dist: 0.3
@@ -67,7 +70,9 @@ controller_server:
       allow_reversing: true
       use_rotate_to_heading: false
       rotate_to_heading_min_angle: 0.0
-      max_angular_accel: 3.2
+      # Accélération angulaire réduite pour des rotations plus douces
+      # (3.2 rad/s² était abrupt; 1.5 reste très réactif)
+      max_angular_accel: 1.5
 
 local_costmap:
   local_costmap:
@@ -78,17 +83,22 @@ local_costmap:
       robot_base_frame: base_footprint
       use_sim_time: True
       rolling_window: true
-      width: 3
-      height: 3
+      # Costmap local élargi de 3x3 à 4x4: donne plus de marge pour
+      # planifier les évitements sans coût CPU notable.
+      width: 4
+      height: 4
       resolution: 0.05
-      footprint: "[[-0.46, 0.36], [0.46, 0.36], [0.46, -0.36], [-0.46, -0.36]]" # <--- AJOUTEZ CECI
+      footprint: "[[-0.46, 0.36], [0.46, 0.36], [0.46, -0.36], [-0.46, -0.36]]"
 
       transform_tolerance: 2.0
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 2.0
-        inflation_radius: 0.50      # CORRIGE : Légèrement augmenté pour la sécurité
+        # Inflation réduite de 0.50m à 0.40m: les couloirs d'hôpital
+        # sont étroits (~1.5-2m); 0.50m bloquait parfois des passages
+        # praticables. 0.40m couvre encore la demi-largeur (0.36m) + marge.
+        inflation_radius: 0.40
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -148,7 +158,8 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.50      # CORRIGE : Cohérent avec local
+        # Cohérent avec local_costmap (réduit de 0.50 à 0.40)
+        inflation_radius: 0.40
       always_send_full_costmap: True
 
 map_saver:
@@ -192,8 +203,12 @@ amcl:
     max_particles: 800
     min_particles: 400
     transform_tolerance: 5.0
-    update_min_d: 0.001               # CORRIGE : Pour économiser le CPU
-    update_min_a: 0.001               # CORRIGE : Pour économiser le CPU
+    # Seuils de mise à jour relâchés: AMCL se met à jour si le robot
+    # bouge de plus de 2cm OU tourne de plus de ~1.7°. Les anciennes
+    # valeurs 0.001 forçaient un update à chaque tick, surchargeant le
+    # CPU sans gain de précision.
+    update_min_d: 0.02
+    update_min_a: 0.03
     resample_interval: 3
     recovery_alpha_fast: 0.0
     recovery_alpha_slow: 0.0
