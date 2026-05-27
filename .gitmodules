@@ -1,0 +1,4 @@
+[submodule "src/aws-robomaker-hospital-world"]
+	ignore = dirty
+	path = src/aws-robomaker-hospital-world
+	url = https://github.com/aws-robotics/aws-robomaker-hospital-world.git
