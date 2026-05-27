@@ -4,7 +4,7 @@
   <name>navibot_description</name>
   <version>0.0.1</version>
   <description>Description URDF, mondes Gazebo et fichiers de lancement pour le robot mobile NaviBot (projet de Master).</description>
-  <maintainer email="ismail@example.com">ismail</maintainer>
+  <maintainer email="ibfk023@gmail.com">ismail</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_python</buildtool_depend>

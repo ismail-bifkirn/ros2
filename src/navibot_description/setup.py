@@ -24,7 +24,7 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='ismail',
-    maintainer_email='ismail@todo.todo',
+    maintainer_email='ibfk023@gmail.com',
     description='Description du robot NaviBot',
     license='TODO: License declaration',
     tests_require=['pytest'],
