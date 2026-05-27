@@ -140,6 +140,14 @@
     <origin xyz="${base_length/2 + 0.05} 0 0.2" rpy="0 -0.2 0"/>
   </joint>
 
+  <!-- IMPORTANT: empêcher Gazebo de "lumper" ce joint fixe dans base_link,
+       sinon l'inclinaison (pitch) est perdue lors de la conversion URDF->SDF
+       et le capteur reste horizontal en simulation. -->
+  <gazebo reference="lidar_obstacles_bas_joint">
+    <preserveFixedJoint>true</preserveFixedJoint>
+    <disableFixedJointLumping>true</disableFixedJointLumping>
+  </gazebo>
+
   <!-- 4. IMU -->
   <link name="imu_link">
     <visual><geometry><box size="0.02 0.02 0.01"/></geometry></visual>
