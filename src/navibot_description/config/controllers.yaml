@@ -1,18 +1,29 @@
+# Configuration ros2_control pour skid-steer 4 roues.
+# NB: Ce fichier n'est utilisé que si ros2_control est activé dans l'URDF
+# (bloc <ros2_control> + plugin gazebo_ros2_control). Actuellement le robot
+# utilise gazebo_ros_diff_drive directement, donc ce fichier reste prêt pour
+# une migration future vers ros2_control.
+
 controller_manager:
   ros__parameters:
     update_rate: 30
     use_sim_time: true
 
-    diff_drive_controller:
+    diff_cont:
       type: diff_drive_controller/DiffDriveController
 
-    joint_state_broadcaster:
+    joint_broad:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-diff_drive_controller:
+diff_cont:
   ros__parameters:
     use_sim_time: true
-    left_wheel_names: ["front_left_wheel_joint"]
-    right_wheel_names: ["front_right_wheel_joint"]
+    left_wheel_names:  ["front_left_wheel_joint",  "rear_left_wheel_joint"]
+    right_wheel_names: ["front_right_wheel_joint", "rear_right_wheel_joint"]
     wheel_separation: 0.7
     wheel_radius: 0.10
+    use_stamped_vel: false
+    publish_rate: 50.0
+    base_frame_id: base_footprint
+    odom_frame_id: odom
+    enable_odom_tf: true
