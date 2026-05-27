@@ -1,1 +1,0 @@
-/home/ismail/ros2_ws/src/navibot_description/launch/gazebo.launch.py
