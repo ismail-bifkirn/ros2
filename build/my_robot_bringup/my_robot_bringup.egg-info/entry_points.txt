@@ -1,5 +1,0 @@
-[console_scripts]
-obstacle_avoidance_node = my_robot_bringup.obstacle_avoidance_node:main
-patrol_node = my_robot_bringup.patrol_node:main
-robot_monitor_node = my_robot_bringup.robot_monitor_node:main
-

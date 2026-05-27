@@ -1,6 +1,7 @@
 map_server:
   ros__parameters:
     yaml_filename: "/home/ismail/ros2_ws/src/navibot_description/maps/ma_carte.yaml"
+    use_sim_time: True
 
 bt_navigator:
   ros__parameters:
@@ -25,10 +26,11 @@ controller_server:
   ros__parameters:
     use_sim_time: True
     controller_frequency: 20.0
-    transform_tolerance: 2.0  # <-- CRITICAL pour ton PC
+    transform_tolerance: 2.0
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.001
     min_theta_velocity_threshold: 0.001
+    
     progress_checker_plugins: ["progress_checker"]
     goal_checker_plugins: ["general_goal_checker"] 
     controller_plugins: ["FollowPath"]
@@ -45,47 +47,32 @@ controller_server:
       stateful: True
 
     FollowPath:
-      plugin: "dwb_core::DWBLocalPlanner"
-      debug_trajectory_details: True
-      min_vel_x: 0.0
-      min_vel_y: 0.0
-      max_vel_x: 0.26
-      max_vel_y: 0.0
-      max_vel_theta: 1.0
-      min_speed_xy: 0.0
-      max_speed_xy: 0.26
-      min_speed_theta: 0.0
-      acc_lim_x: 2.5
-      acc_lim_y: 0.0
-      acc_lim_theta: 3.2
-      decel_lim_x: -2.5
-      decel_lim_y: 0.0
-      decel_lim_theta: -3.2
-      vx_samples: 10      # <-- BAISSE pour aider ton PC
-      vy_samples: 5
-      vtheta_samples: 10  # <-- BAISSE pour aider ton PC
-      sim_time: 1.7
-      linear_granularity: 0.05
-      angular_granularity: 0.025
-      xy_goal_tolerance: 0.25
-      trans_stopped_velocity: 0.25
-      short_circuit_trajectory_evaluation: True
-      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-      BaseObstacle.scale: 0.02
-      PathAlign.scale: 32.0
-      PathAlign.forward_point_distance: 0.1
-      GoalAlign.scale: 24.0
-      GoalAlign.forward_point_distance: 0.1
-      PathDist.scale: 32.0
-      GoalDist.scale: 24.0
-      RotateToGoal.scale: 32.0
-      RotateToGoal.slowing_factor: 5.0
-      RotateToGoal.lookahead_time: -1.0
-      
+      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+      desired_linear_vel: 0.26
+      lookahead_dist: 1.2
+      min_lookahead_dist: 0.6
+      max_lookahead_dist: 1.5
+      use_velocity_scaled_lookahead_dist: true
+      min_approach_linear_velocity: 0.05
+      approach_velocity_scaling_dist: 0.3
+      max_allowed_approach_vel: 0.20
+      use_collision_detection: true
+      use_regulated_linear_velocity_scaling: true
+      regulated_linear_scaling_min_radius: 1.0
+      regulated_linear_scaling_min_speed: 0.25
+      use_cost_regulated_linear_velocity_scaling: true
+      cost_scaling_dist: 0.5
+      cost_scaling_factor: 1.0
+      inflation_cost_scaling_factor: 3.0
+      allow_reversing: true
+      use_rotate_to_heading: false
+      rotate_to_heading_min_angle: 0.0
+      max_angular_accel: 3.2
+
 local_costmap:
   local_costmap:
     ros__parameters:
-      update_frequency: 5.0
+      update_frequency: 20.0
       publish_frequency: 2.0
       global_frame: odom
       robot_base_frame: base_footprint
@@ -94,13 +81,14 @@ local_costmap:
       width: 3
       height: 3
       resolution: 0.05
-      robot_radius: 0.35
-      transform_tolerance: 2.0 # <-- AJOUTE
+      footprint: "[[-0.46, 0.36], [0.46, 0.36], [0.46, -0.36], [-0.46, -0.36]]" # <--- AJOUTEZ CECI
+
+      transform_tolerance: 2.0
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        cost_scaling_factor: 2.0
+        inflation_radius: 0.50      # CORRIGE : Légèrement augmenté pour la sécurité
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -112,22 +100,20 @@ local_costmap:
         mark_threshold: 0
         observation_sources: scan scan_3d
         scan_3d:
-        topic: /scan_3d
-        max_obstacle_height: 2.0
-        clearing: false
-        marking: true
-        data_type: "LaserScan"
-        obstacle_max_range: 2.0
-        obstacle_min_range: 0.1        
+          topic: /scan_3d
+          max_obstacle_height: 2.0
+          clearing: false
+          marking: true
+          data_type: "LaserScan"
+          obstacle_max_range: 5.0
         scan:
           topic: /scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 3.0
-          raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
+          obstacle_max_range: 10.0
+          raytrace_max_range: 12.0
           obstacle_min_range: 0.0
 
 global_costmap:
@@ -138,9 +124,10 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_footprint
       use_sim_time: True
-      robot_radius: 0.35
+      footprint: "[[-0.46, 0.36], [0.46, 0.36], [0.46, -0.36], [-0.46, -0.36]]" # <--- AJOUTEZ CECI
+
       resolution: 0.05
-      transform_tolerance: 2.0 # <-- AJOUTE
+      transform_tolerance: 2.0
       track_unknown_space: true
       plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
       obstacle_layer:
@@ -153,13 +140,15 @@ global_costmap:
           clearing: True
           marking: True
           data_type: "LaserScan"
+          obstacle_max_range: 10.0
+          raytrace_max_range: 12.0
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        inflation_radius: 0.50      # CORRIGE : Cohérent avec local
       always_send_full_costmap: True
 
 map_saver:
@@ -203,8 +192,8 @@ amcl:
     max_particles: 800
     min_particles: 400
     transform_tolerance: 5.0
-    update_min_d: 0.5
-    update_min_a: 1.0
+    update_min_d: 0.001               # CORRIGE : Pour économiser le CPU
+    update_min_a: 0.001               # CORRIGE : Pour économiser le CPU
     resample_interval: 3
     recovery_alpha_fast: 0.0
     recovery_alpha_slow: 0.0
@@ -214,3 +203,5 @@ amcl:
     pf_err: 0.05
     pf_z: 0.99
     robot_model_type: "nav2_amcl::DifferentialMotionModel"
+
+

@@ -1,1 +1,0 @@
-/home/ismail/ros2_ws/build/my_4w_robot_description/ament_cmake_environment_hooks/local_setup.sh

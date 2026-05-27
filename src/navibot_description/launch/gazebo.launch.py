@@ -29,12 +29,14 @@ def generate_launch_description():
         )
         print(f"⚠️  Hospital package not built. Using source: {hospital_pkg_share}")
 
+    # Chemins des fichiers
     urdf_file = os.path.join(pkg_share, 'urdf', 'navibot.urdf.xacro')
     world_file = os.path.join(hospital_pkg_share, 'worlds', 'hospital.world')
     
     models_dir = os.path.join(hospital_pkg_share, 'models')
     fuel_models_dir = os.path.join(hospital_pkg_share, 'fuel_models')
     
+    # Configuration GAZEBO_MODEL_PATH
     current_model_path = os.environ.get('GAZEBO_MODEL_PATH', '')
     new_paths = f"{models_dir}:{fuel_models_dir}"
     gazebo_model_path = f"{new_paths}:{current_model_path}" if current_model_path else new_paths
@@ -51,7 +53,7 @@ def generate_launch_description():
         raise
 
     # =====================================================================
-    # 3. ⭐ ENVIRONMENT VARIABLES
+    # 3. ENVIRONMENT VARIABLES
     # =====================================================================
     set_model_path = SetEnvironmentVariable(
         name='GAZEBO_MODEL_PATH',
@@ -64,7 +66,7 @@ def generate_launch_description():
     )
 
     # =====================================================================
-    # 4. ⭐ GAZEBO LAUNCH (OGRE2 OPTIMISÉ POUR LA PROFONDEUR RGB-D) ⭐
+    # 4. GAZEBO LAUNCH
     # =====================================================================
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -96,7 +98,7 @@ def generate_launch_description():
     )
 
     # =====================================================================
-    # 6. ⭐ SPAWN ENTITY
+    # 6. SPAWN ENTITY
     # =====================================================================
     spawn_entity = Node(
         package='gazebo_ros',
@@ -112,30 +114,26 @@ def generate_launch_description():
     )
 
     # =====================================================================
-    # 7. LOGS INFORMATIFS
-    # =====================================================================
-    log_start = LogInfo(msg='🚀 Lancement Gazebo avec Ogre2 (Optimisé RGB-D)...')
-    log_spawn = LogInfo(msg='🤖 Spawn du robot navibot avec Caméra RGB-D...')
-    log_ready = LogInfo(msg='✅ Robot spawné ! Attendez 10s puis lancez Nav2.')
-
-    # =====================================================================
-    # RETURN
+    # 7. LOGS & RETURN
     # =====================================================================
     return LaunchDescription([
         set_model_path,
         set_sim_time_env,
-        log_start,
+        LogInfo(msg='🚀 Lancement Gazebo...'),
         gazebo,
+        
+        # On attend 5s que Gazebo soit prêt
         TimerAction(
             period=5.0,  
             actions=[
-                log_spawn,
+                LogInfo(msg='🤖 Publication URDF et Spawn...'),
                 node_robot_state_publisher,
+                # On attend encore 3s que l'arbre TF soit stable avant de spawn
                 TimerAction(
                     period=3.0,  
                     actions=[
                         spawn_entity,
-                        log_ready
+                        LogInfo(msg='✅ Robot Spawné ! Lancez maintenant le fichier de navigation.')
                     ]
                 )
             ]
