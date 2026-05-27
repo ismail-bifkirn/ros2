@@ -138,8 +138,9 @@ ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws/src/navibot_description/maps
 |--------------------------------|----------------------------|------------------|
 | `/scan`                        | `sensor_msgs/LaserScan`    | LiDAR 360°       |
 | `/scan_obstacles_bas`          | `sensor_msgs/LaserScan`    | LiDAR incliné    |
-| `/odom`                        | `nav_msgs/Odometry`        | diff_drive plugin|
-| `/imu`                         | `sensor_msgs/Imu`          | Plugin IMU       |
+| `/odom`                        | `nav_msgs/Odometry`        | diff_drive plugin (entrée EKF) |
+| `/odometry/filtered`           | `nav_msgs/Odometry`        | EKF (fusion odom+IMU)|
+| `/imu`                         | `sensor_msgs/Imu`          | Plugin IMU (entrée EKF) |
 | `/camera/image_raw`            | `sensor_msgs/Image`        | Caméra RGB       |
 | `/cmd_vel`                     | `geometry_msgs/Twist`      | Nav2 → robot     |
 | `/map`                         | `nav_msgs/OccupancyGrid`   | map_server       |
@@ -153,7 +154,7 @@ ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws/src/navibot_description/maps
 | `urdf/navibot.urdf.xacro`             | Description physique du robot                 |
 | `config/nav2_params.yaml`             | Paramètres complets de la pile Nav2           |
 | `config/slam_params.yaml`             | Paramètres slam_toolbox                       |
-| `config/ekf.yaml`                     | Configuration EKF (non câblé par défaut)      |
+| `config/ekf.yaml`                     | Configuration EKF (lancé via gazebo.launch.py)|
 | `config/controllers.yaml`             | Config ros2_control (non câblé par défaut)    |
 | `maps/ma_carte.yaml`                  | Carte par défaut chargée par AMCL             |
 | `rviz/navibot.rviz`                   | Configuration de visualisation RViz           |
@@ -192,13 +193,55 @@ les logs Gazebo au démarrage).
 
 ---
 
-## Améliorations en cours / TODO
+## Résultats et performances
 
-- Activer la fusion EKF (`ekf.yaml` prêt, à lancer dans un launch dédié).
+Cette section rassemble les observations concrètes du système en
+fonctionnement. À compléter au fur et à mesure des essais.
+
+### Captures d'écran
+
+> _À insérer : ajouter les images dans `docs/screenshots/` puis les
+> référencer ici._
+
+- **Robot dans Gazebo** : `docs/screenshots/gazebo_robot.png`
+- **RViz : carte, LiDAR, plan** : `docs/screenshots/rviz_nav2.png`
+- **LiDAR incliné détectant un obstacle bas** :
+  `docs/screenshots/lidar_obstacles_bas.png`
+
+### Mesures suggérées à documenter
+
+| Métrique | Comment la mesurer |
+|----------|--------------------|
+| Temps moyen de planification globale | `ros2 topic echo /plan_time` ou trace de `nav2_planner` |
+| Succès du goal | Sur N tentatives, combien terminent en SUCCEEDED ? |
+| Erreur de localisation AMCL | `ros2 topic echo /amcl_pose` vs position vraie (Gazebo `/model_states`) |
+| Stabilité du yaw (avec/sans EKF) | Comparer `/odom` vs `/odometry/filtered` sur une rotation |
+| Détection des obstacles bas | Placer un cube de 15 cm devant le robot, vérifier que le costmap le marque via `/scan_obstacles_bas` |
+
+### Outils de mesure utiles
+
+```bash
+# Enregistrer une session pour rejeu et analyse
+ros2 bag record -o ma_session /tf /tf_static /scan /scan_obstacles_bas \
+                              /odom /odometry/filtered /imu /amcl_pose
+
+# Tracer un signal en temps réel
+ros2 run rqt_plot rqt_plot /odometry/filtered/pose/pose/position/x
+
+# Visualiser l'arbre TF
+ros2 run tf2_tools view_frames
+```
+
+---
+
+## Améliorations envisagées (hors scope actuel)
+
 - Migrer de `gazebo_ros_diff_drive` vers `ros2_control` + skid_steer
-  4-roues pour un contrôle plus réaliste.
-- Documenter les performances de navigation (temps de planification,
-  succès sur scénarios types).
+  4-roues pour un contrôle plus réaliste. (Reporté : connu pour être
+  instable avec ROS 2 Humble + Gazebo Classic, voir l'écosystème
+  ros2_control / gazebo_ros2_control sur cette distribution.)
+- Affiner les paramètres Nav2 (inflation, lookahead, vitesses) selon
+  les scénarios spécifiques au monde « hospital ».
 
 ---
 
