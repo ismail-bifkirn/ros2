@@ -113,7 +113,7 @@
 
   <!-- 3. LIDAR 2D INCLINÉ — Anti-collision pour obstacles bas en avant -->
   <!-- NB: ce capteur est un LaserScan 2D (un seul plan), pas un LiDAR 3D. -->
-  <link name="tilted_lidar_link">
+  <link name="lidar_obstacles_bas_link">
     <visual>
       <geometry><cylinder radius="0.04" length="0.05"/></geometry>
       <material name="red"/>
@@ -127,9 +127,9 @@
     </inertial>
   </link>
 
-  <joint name="tilted_lidar_joint" type="fixed">
+  <joint name="lidar_obstacles_bas_joint" type="fixed">
     <parent link="base_link"/>
-    <child link="tilted_lidar_link"/>
+    <child link="lidar_obstacles_bas_link"/>
     <!-- Position: avant du robot, centré, hauteur 0.2 m.
          Inclinaison: PITCH de -0.1 rad (≈ -5.7°) pour pointer vers le sol
          devant le robot (axe Y = pitch, PAS roll). -->
@@ -231,8 +231,8 @@
   </gazebo>
 
   <!-- LiDAR 2D INCLINÉ — demi-cercle avant pour anticollision basse -->
-  <gazebo reference="tilted_lidar_link">
-    <sensor type="ray" name="tilted_laser">
+  <gazebo reference="lidar_obstacles_bas_link">
+    <sensor type="ray" name="laser_obstacles_bas">
       <pose>0 0 0 0 0 0</pose>
       <visualize>true</visualize>
       <update_rate>10</update_rate>
@@ -256,12 +256,12 @@
           <stddev>0.01</stddev>
         </noise>
       </ray>
-      <plugin name="tilted_scan_plugin" filename="libgazebo_ros_ray_sensor.so">
+      <plugin name="plugin_scan_obstacles_bas" filename="libgazebo_ros_ray_sensor.so">
         <ros>
-          <remapping>~/out:=/scan_tilted</remapping>
+          <remapping>~/out:=/scan_obstacles_bas</remapping>
         </ros>
         <output_type>sensor_msgs/LaserScan</output_type>
-        <frame_name>tilted_lidar_link</frame_name>
+        <frame_name>lidar_obstacles_bas_link</frame_name>
       </plugin>
     </sensor>
   </gazebo>

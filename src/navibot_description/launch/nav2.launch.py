@@ -103,7 +103,7 @@ def generate_launch_description():
         declare_rviz,
         
         LogInfo(msg='⏱️ Lancement Nav2 avec use_sim_time:=true (FORCÉ)'),
-        LogInfo(msg='👁️ Anticollision basse active via LiDAR 2D incliné (/scan_tilted)'),
+        LogInfo(msg='👁️ Anticollision basse active via LiDAR 2D incliné (/scan_obstacles_bas)'),
         
         start_localization,
         start_navigation,
