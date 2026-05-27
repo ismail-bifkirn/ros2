@@ -26,7 +26,6 @@ La pile logicielle utilise :
 | Gazebo Classic  | Simulation physique + capteurs                       |
 | `slam_toolbox`  | Cartographie SLAM en ligne                           |
 | `nav2_bringup`  | Localisation (AMCL), planification, contrôle         |
-| `robot_localization` | Fusion EKF odom + IMU (configurable, voir TODO) |
 | RViz2           | Visualisation                                        |
 
 ---
@@ -53,7 +52,6 @@ joints fixes définis dans `urdf/navibot.urdf.xacro`.
   sudo apt install \
     ros-humble-nav2-bringup \
     ros-humble-slam-toolbox \
-    ros-humble-robot-localization \
     ros-humble-gazebo-ros-pkgs \
     ros-humble-xacro
   ```
@@ -138,9 +136,8 @@ ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws/src/navibot_description/maps
 |--------------------------------|----------------------------|------------------|
 | `/scan`                        | `sensor_msgs/LaserScan`    | LiDAR 360°       |
 | `/scan_obstacles_bas`          | `sensor_msgs/LaserScan`    | LiDAR incliné    |
-| `/odom`                        | `nav_msgs/Odometry`        | diff_drive plugin (entrée EKF) |
-| `/odometry/filtered`           | `nav_msgs/Odometry`        | EKF (fusion odom+IMU)|
-| `/imu`                         | `sensor_msgs/Imu`          | Plugin IMU (entrée EKF) |
+| `/odom`                        | `nav_msgs/Odometry`        | diff_drive plugin |
+| `/imu`                         | `sensor_msgs/Imu`          | Plugin IMU (disponible, non fusionnée actuellement) |
 | `/camera/image_raw`            | `sensor_msgs/Image`        | Caméra RGB       |
 | `/cmd_vel`                     | `geometry_msgs/Twist`      | Nav2 → robot     |
 | `/map`                         | `nav_msgs/OccupancyGrid`   | map_server       |
@@ -154,7 +151,6 @@ ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws/src/navibot_description/maps
 | `urdf/navibot.urdf.xacro`             | Description physique du robot                 |
 | `config/nav2_params.yaml`             | Paramètres complets de la pile Nav2           |
 | `config/slam_params.yaml`             | Paramètres slam_toolbox                       |
-| `config/ekf.yaml`                     | Configuration EKF (lancé via gazebo.launch.py)|
 | `config/controllers.yaml`             | Config ros2_control (non câblé par défaut)    |
 | `maps/ma_carte.yaml`                  | Carte par défaut chargée par AMCL             |
 | `rviz/navibot.rviz`                   | Configuration de visualisation RViz           |
@@ -215,7 +211,6 @@ fonctionnement. À compléter au fur et à mesure des essais.
 | Temps moyen de planification globale | `ros2 topic echo /plan_time` ou trace de `nav2_planner` |
 | Succès du goal | Sur N tentatives, combien terminent en SUCCEEDED ? |
 | Erreur de localisation AMCL | `ros2 topic echo /amcl_pose` vs position vraie (Gazebo `/model_states`) |
-| Stabilité du yaw (avec/sans EKF) | Comparer `/odom` vs `/odometry/filtered` sur une rotation |
 | Détection des obstacles bas | Placer un cube de 15 cm devant le robot, vérifier que le costmap le marque via `/scan_obstacles_bas` |
 
 ### Outils de mesure utiles
@@ -223,10 +218,10 @@ fonctionnement. À compléter au fur et à mesure des essais.
 ```bash
 # Enregistrer une session pour rejeu et analyse
 ros2 bag record -o ma_session /tf /tf_static /scan /scan_obstacles_bas \
-                              /odom /odometry/filtered /imu /amcl_pose
+                              /odom /imu /amcl_pose
 
 # Tracer un signal en temps réel
-ros2 run rqt_plot rqt_plot /odometry/filtered/pose/pose/position/x
+ros2 run rqt_plot rqt_plot /odom/pose/pose/position/x
 
 # Visualiser l'arbre TF
 ros2 run tf2_tools view_frames
@@ -236,6 +231,11 @@ ros2 run tf2_tools view_frames
 
 ## Améliorations envisagées (hors scope actuel)
 
+- Fusion EKF (`robot_localization`) odom + IMU : explorée mais non
+  retenue. En simulation Gazebo, l'odométrie de `gazebo_ros_diff_drive`
+  est idéale (sans glissement ni bruit réaliste), donc le gain d'une
+  fusion EKF est marginal et a perturbé la localisation AMCL dans
+  cette configuration. Pertinent surtout pour un robot physique réel.
 - Migrer de `gazebo_ros_diff_drive` vers `ros2_control` + skid_steer
   4-roues pour un contrôle plus réaliste. (Reporté : connu pour être
   instable avec ROS 2 Humble + Gazebo Classic, voir l'écosystème
