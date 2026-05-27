@@ -37,9 +37,12 @@ def generate_launch_description():
     fuel_models_dir = os.path.join(hospital_pkg_share, 'fuel_models')
     
     # Configuration GAZEBO_MODEL_PATH
-    current_model_path = os.environ.get('GAZEBO_MODEL_PATH', '')
-    new_paths = f"{models_dir}:{fuel_models_dir}"
-    gazebo_model_path = f"{new_paths}:{current_model_path}" if current_model_path else new_paths
+    # Important: on N'HÉRITE PAS la valeur d'environnement existante.
+    # Si l'utilisateur a un GAZEBO_MODEL_PATH polluant (ex: pointant
+    # vers /opt/ros/humble/share/turtlebot3_*), Gazebo affiche des
+    # dizaines de "Missing model.config" pour chaque paquet ROS scanné.
+    # On override pour ne lister que les modèles du monde hospital.
+    gazebo_model_path = f"{models_dir}:{fuel_models_dir}"
 
     # =====================================================================
     # 2. PROCESSUS URDF/XACRO
