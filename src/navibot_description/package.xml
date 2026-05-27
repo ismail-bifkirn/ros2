@@ -2,17 +2,27 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>navibot_description</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="ismail@todo.todo">ismail</maintainer>
-  <license>TODO: License declaration</license>
+  <version>0.0.1</version>
+  <description>Description URDF, mondes Gazebo et fichiers de lancement pour le robot mobile NaviBot (projet de Master).</description>
+  <maintainer email="ismail@example.com">ismail</maintainer>
+  <license>Apache-2.0</license>
 
-  <buildtool_depend>ament_cmake</buildtool_depend>
-  
-  <!-- Dépendances d'exécution importantes -->
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <!-- Dépendances d'exécution -->
   <exec_depend>robot_state_publisher</exec_depend>
-  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>xacro</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros_pkgs</exec_depend>
+  <exec_depend>nav2_bringup</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>nav2_amcl</exec_depend>
+  <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+  <!-- Dépendances optionnelles (ros2_control non-câblé actuellement) -->
   <exec_depend>ros2_control</exec_depend>
   <exec_depend>ros2_controllers</exec_depend>
   <exec_depend>gazebo_ros2_control</exec_depend>
