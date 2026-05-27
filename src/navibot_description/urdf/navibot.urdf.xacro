@@ -131,13 +131,15 @@
     <parent link="base_link"/>
     <child link="lidar_obstacles_bas_link"/>
     <!-- Position: avant du robot, centré, hauteur 0.2 m.
-         Inclinaison: PITCH de -0.2 rad (≈ -11.5°) pour pointer vers le sol
+         Inclinaison: PITCH de +0.2 rad (≈ +11.5°) pour pointer vers le sol
          devant le robot (axe Y = pitch, PAS roll).
+         Convention ROS: R_y(+θ) bascule l'axe +X (avant) vers -Z (bas),
+         donc un pitch POSITIF fait pencher l'avant du capteur VERS LE BAS.
          Géométrie: capteur à ~0.5 m du sol, portée max 2.0 m.
          Le sol serait touché à d = 0.5/tan(0.2) ≈ 2.46 m, donc HORS portée:
          pas de faux positifs sur le sol.
          Détection garantie d'obstacles >= 10 cm à 2 m devant, >= 30 cm à 1 m. -->
-    <origin xyz="${base_length/2 + 0.05} 0 0.2" rpy="0 -0.2 0"/>
+    <origin xyz="${base_length/2 + 0.05} 0 0.2" rpy="0 0.2 0"/>
   </joint>
 
   <!-- IMPORTANT: empêcher Gazebo de "lumper" ce joint fixe dans base_link,
