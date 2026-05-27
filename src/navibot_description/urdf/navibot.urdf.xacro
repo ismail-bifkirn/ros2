@@ -199,11 +199,11 @@
       <odometry_topic>/odom</odometry_topic>
       <odometry_frame>odom</odometry_frame>
       <robot_base_frame>base_footprint</robot_base_frame>
-      <!-- Le plugin publie /odom (utilisé par EKF) mais PAS la TF.
-           La TF odom -> base_footprint est publiée par le noeud EKF
-           (robot_localization), qui fusionne /odom et /imu. -->
+      <!-- Ce plugin (avant) est l'unique source d'odométrie ET de la TF
+           odom -> base_footprint. Le plugin arrière a publish_odom=false
+           pour éviter le double publisher. -->
       <publish_odom>true</publish_odom>
-      <publish_odom_tf>false</publish_odom_tf>
+      <publish_odom_tf>true</publish_odom_tf>
     </plugin>
   </gazebo>
 

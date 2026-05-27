@@ -116,21 +116,6 @@ def generate_launch_description():
     # =====================================================================
     # 7. LOGS & RETURN
     # =====================================================================
-    # =====================================================================
-    # 8. EKF (robot_localization)
-    # =====================================================================
-    # Le noeud EKF prend la place de gazebo_ros_diff_drive pour publier
-    # la TF odom -> base_footprint, en fusionnant /odom (roues) et /imu.
-    # Voir config/ekf.yaml. Le plugin Gazebo a publish_odom_tf=false.
-    ekf_params = os.path.join(pkg_share, 'config', 'ekf.yaml')
-    ekf_node = Node(
-        package='robot_localization',
-        executable='ekf_node',
-        name='ekf_node',
-        output='screen',
-        parameters=[ekf_params, {'use_sim_time': True}],
-    )
-
     return LaunchDescription([
         set_model_path,
         set_sim_time_env,
@@ -148,16 +133,7 @@ def generate_launch_description():
                     period=3.0,
                     actions=[
                         spawn_entity,
-                        LogInfo(msg='✅ Robot Spawné !')
-                    ]
-                ),
-                # EKF démarré après robot_state_publisher, ~2s plus tard
-                # pour laisser à /odom et /imu le temps d'apparaître.
-                TimerAction(
-                    period=5.0,
-                    actions=[
-                        ekf_node,
-                        LogInfo(msg='🧭 EKF (robot_localization) actif. Lancez maintenant nav2.')
+                        LogInfo(msg='✅ Robot Spawné ! Lancez maintenant nav2.')
                     ]
                 ),
             ]
