@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">NaviBot</string>
+    <string name="title_activity_main">NaviBot</string>
+    <string name="package_name">com.navibot.app</string>
+    <string name="custom_url_scheme">com.navibot.app</string>
+</resources>
