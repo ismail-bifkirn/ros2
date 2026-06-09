@@ -1,0 +1,11 @@
+{
+	"appId": "com.navibot.app",
+	"appName": "NaviBot",
+	"webDir": "dist",
+	"server": {
+		"cleartext": true
+	},
+	"android": {
+		"allowMixedContent": true
+	}
+}

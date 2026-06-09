@@ -71,27 +71,6 @@ def generate_launch_description():
         output='screen'
     )
 
-    # ====== COLLISION MONITOR ======
-    collision_monitor = Node(
-        package='nav2_collision_monitor',
-        executable='collision_monitor',
-        name='collision_monitor',
-        output='screen',
-        parameters=[nav2_params, {'use_sim_time': True}],
-    )
-
-    lifecycle_manager_collision = Node(
-        package='nav2_lifecycle_manager',
-        executable='lifecycle_manager',
-        name='lifecycle_manager_collision',
-        output='screen',
-        parameters=[
-            {'use_sim_time': True},
-            {'autostart': True},
-            {'node_names': ['collision_monitor']},
-        ],
-    )
-
     # ====== LOCALIZATION ======
     start_localization = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(localization_launch),
@@ -128,8 +107,6 @@ def generate_launch_description():
         
         start_localization,
         start_navigation,
-        collision_monitor,
-        lifecycle_manager_collision,
         rviz_node,
 
         LogInfo(msg='✅ Nav2 + Collision Monitor prêts !'),
