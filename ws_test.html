@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html><body>
+<h2>Mobile WebSocket Test</h2>
+<p>Testing <code>ws://100.76.117.64:9090</code></p>
+<pre id="log" style="background:#eee;padding:1em;font:monospace"></pre>
+<script>
+var log = document.getElementById('log');
+function add(m) { log.textContent += m + '\n'; }
+add('Creating WebSocket...');
+var ws = new WebSocket('ws://100.76.117.64:9090');
+ws.onopen    = function() { add('>> OPENED - SUCCESS!'); };
+ws.onerror   = function(e) { add('>> ERROR event (see console)'); };
+ws.onclose   = function(e) { add('>> CLOSED code=' + e.code + ' reason=' + e.reason); };
+ws.onmessage = function(e) { add('>> MSG: ' + JSON.stringify(e.data).substring(0,150)); };
+add('Waiting... (may take ~30s to timeout)');
+</script>
+</body></html>

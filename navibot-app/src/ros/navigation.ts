@@ -23,7 +23,7 @@ export function navigateToPose(
 
   const goal = {
     pose: {
-      header: { frame_id: 'map', stamp: { sec: 0, nanosec: 0 } },
+      header: { frame_id: 'map', stamp: { sec: Math.floor(Date.now() / 1000), nanosec: 0 } },
       pose:   { position: { x, y, z: 0 }, orientation: yawToQuat(yaw) },
     },
     behavior_tree: '',

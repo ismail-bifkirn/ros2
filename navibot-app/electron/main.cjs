@@ -1,6 +1,11 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
+if (process.env.XDG_SESSION_TYPE === 'wayland') {
+  app.commandLine.appendSwitch('enable-features', 'UseOzonePlatform');
+  app.commandLine.appendSwitch('ozone-platform', 'wayland');
+}
+
 const distDir = path.join(__dirname, '..', 'dist');
 
 let mainWindow;

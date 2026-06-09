@@ -30,20 +30,29 @@
       "electron/**/*.cjs"
     ],
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "category": "Utility"
     },
     "win": {
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "mac": {
-      "target": ["dmg"]
+      "target": [
+        "dmg"
+      ]
     }
   },
   "dependencies": {
     "@capacitor/android": "^8.3.4",
     "@capacitor/cli": "^7.6.5",
     "@capacitor/core": "^8.3.4",
+    "@capacitor/filesystem": "^8.1.2",
+    "@capacitor/share": "^8.0.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "roslib": "^2.1.0",

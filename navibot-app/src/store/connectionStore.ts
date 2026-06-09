@@ -6,6 +6,7 @@ import type { ConnectionStatus } from '../types';
 interface S {
   status:     ConnectionStatus;
   url:        string;
+  errorMsg:   string;
   connect:    (url: string) => void;
   disconnect: ()            => void;
 }
@@ -19,13 +20,15 @@ export const useConnectionStore = create<S>()(
                 : s === 'connecting'   ? 'connecting'
                 : s === 'error'        ? 'error'
                 :                        'disconnected',
+          errorMsg: s === 'error' ? rosBridge.lastError : '',
         })
       );
       return {
         status:     'disconnected',
         url:        'ws://localhost:9090',
-        connect:    (url) => { set({ url }); rosBridge.connect(url); },
-        disconnect: ()    => { rosBridge.disconnect(); set({ status: 'disconnected' }); },
+        errorMsg:   '',
+        connect:    (url) => { set({ url, errorMsg: '' }); rosBridge.connect(url); },
+        disconnect: ()    => { rosBridge.disconnect(); set({ status: 'disconnected', errorMsg: '' }); },
       };
     },
     { name: 'robot-connection', partialize: (s) => ({ url: s.url }) },

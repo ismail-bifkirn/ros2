@@ -7,6 +7,7 @@ interface S {
   addRoom:    (r: Omit<Room, 'id'>)          => void;
   updateRoom: (id: string, u: Partial<Room>) => void;
   deleteRoom: (id: string)                   => void;
+  setRoomsFromJSON: (r: Room[])          => void;
 }
 
 export const useRoomsStore = create<S>()(
@@ -21,6 +22,7 @@ export const useRoomsStore = create<S>()(
       addRoom:    (r)      => set((s) => ({ rooms: [...s.rooms, { ...r, id: self.crypto.randomUUID?.() ?? Math.random().toString(36).slice(2) }] })),
       updateRoom: (id, u)  => set((s) => ({ rooms: s.rooms.map(r => r.id === id ? { ...r, ...u } : r) })),
       deleteRoom: (id)     => set((s) => ({ rooms: s.rooms.filter(r => r.id !== id) })),
+      setRoomsFromJSON: (r: Room[]) => set({ rooms: r }),
     }),
     { name: 'robot-rooms' },
   )

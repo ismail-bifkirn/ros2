@@ -16,7 +16,7 @@ const LABEL: Record<string, string> = {
 };
 
 export default function ConnectionBar() {
-  const { status, url, connect, disconnect } = useConnectionStore();
+  const { status, url, errorMsg, connect, disconnect } = useConnectionStore();
   const [editUrl, setEditUrl] = useState(url);
   const [open, setOpen] = useState(false);
 
@@ -28,6 +28,9 @@ export default function ConnectionBar() {
           {LABEL[status]}{' '}
           <span className="text-gray-600 font-mono text-xs">{url}</span>
         </span>
+        {errorMsg && status === 'error' && (
+          <span className="text-red-400 text-xs truncate max-w-[200px]" title={errorMsg}>{errorMsg}</span>
+        )}
         {status === 'connected'
           ? <button onClick={disconnect}         className="text-red-400  hover:text-red-300  text-xs shrink-0">Disconnect</button>
           : <button onClick={() => setOpen(true)} className="text-blue-400 hover:text-blue-300 text-xs shrink-0">Configure</button>

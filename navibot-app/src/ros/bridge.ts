@@ -20,19 +20,33 @@ class RosBridgeManager {
     return () => { this._cbs = this._cbs.filter(f => f !== cb); };
   }
 
+  private _errMsg = '';
+  get lastError() { return this._errMsg; }
+
   connect(url: string) {
     this._url = url;
     this._clearTimer();
+    this._errMsg = '';
     try { this.ros?.close(); } catch { /**/ }
 
     this._emit('connecting');
-    this.ros = new ROSLIB.Ros({ url });
+    try {
+      this.ros = new ROSLIB.Ros({ url });
+    } catch (e: unknown) {
+      this._errMsg = String(e);
+      this._emit('error');
+      return;
+    }
 
     this.ros.on('connection', () => {
       this._clearTimer();
+      this._errMsg = '';
       this._emit('connected');
     });
-    this.ros.on('error',   () => this._emit('error'));
+    this.ros.on('error',   (e: unknown) => {
+      this._errMsg = (e as any)?.message ?? String(e) ?? 'unknown error';
+      this._emit('error');
+    });
     this.ros.on('close',   () => {
       this._emit('disconnected');
       this._scheduleReconnect();

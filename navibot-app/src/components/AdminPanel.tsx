@@ -8,17 +8,19 @@ const blank = (): Draft => ({ name: '', x: 0, y: 0, yaw: 0, icon: '📍' });
 
 export default function AdminPanel() {
   const { rooms, addRoom, updateRoom, deleteRoom } = useRoomsStore();
-  const [draft,    setDraft]    = useState<Draft | null>(null);
-  const [fetching, setFetching] = useState(false);
-  const [poseErr,  setPoseErr]  = useState('');
+  const [draft,      setDraft]      = useState<Draft | null>(null);
+  const [fetching,   setFetching]   = useState(false);
+  const [poseErr,    setPoseErr]    = useState('');
+  const [exportJSON, setExportJSON] = useState('');
 
   const save = () => {
     if (!draft?.name.trim()) return;
-    if (draft.id) {
-      const { id, ...updates } = draft;
+    const data = { ...draft, x: +draft.x || 0, y: +draft.y || 0, yaw: +draft.yaw || 0 };
+    if (data.id) {
+      const { id, ...updates } = data;
       updateRoom(id, updates);
     } else {
-      addRoom(draft);
+      addRoom(data);
     }
     setDraft(null);
   };
@@ -59,6 +61,57 @@ export default function AdminPanel() {
         </div>
       ))}
 
+      {/* Export / Import */}
+      {!draft && (
+        <div className="flex gap-2">
+          <button onClick={async () => {
+            const json = JSON.stringify(useRoomsStore.getState().rooms, null, 2);
+            try {
+              await navigator.share({ title: 'NaviBot Rooms', text: json });
+            } catch {
+              try {
+                await navigator.clipboard.writeText(json);
+                alert('Copied to clipboard!');
+              } catch {
+                setExportJSON(json);
+              }
+            }
+          }}
+          className="flex-1 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm">📤 Export</button>
+          <button onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+              const file = (e.target as HTMLInputElement).files?.[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.onload = () => {
+                try {
+                  useRoomsStore.getState().setRoomsFromJSON(JSON.parse(reader.result as string));
+                } catch { alert('Invalid JSON'); }
+              };
+              reader.readAsText(file);
+            };
+            input.click();
+          }}
+          className="flex-1 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm">📥 Import</button>
+        </div>
+      )}
+
+      {/* Export JSON textarea */}
+      {exportJSON && (
+        <div className="bg-gray-800 rounded-xl p-3 space-y-2 border border-yellow-900/60">
+          <p className="text-xs text-gray-400">Copy this JSON, save as <code>rooms.json</code> on your PC, then Import.</p>
+          <textarea readOnly rows={6} value={exportJSON}
+            onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+            className="w-full bg-gray-900 text-green-300 rounded-lg p-2 text-xs font-mono border border-gray-700"
+          />
+          <button onClick={() => setExportJSON('')}
+            className="w-full py-1.5 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm">Close</button>
+        </div>
+      )}
+
       {/* Add button */}
       {!draft && (
         <button
@@ -90,11 +143,23 @@ export default function AdminPanel() {
                 <label className="text-xs text-gray-500">
                   {k === 'x' ? 'X (m)' : k === 'y' ? 'Y (m)' : 'Yaw (rad)'}
                 </label>
-                <input
-                  type="number" step="0.01" value={(draft as any)[k]}
-                  onChange={(e) => setDraft({ ...draft, [k]: parseFloat(e.target.value) || 0 })}
-                  className="mt-1 w-full bg-gray-900 text-white rounded-lg px-2 py-2 text-sm font-mono border border-gray-700 focus:outline-none focus:border-yellow-600"
-                />
+                <div className="flex gap-1 mt-1">
+                  <input
+                    type="text" inputMode="decimal" value={(draft as any)[k]}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === '' || v === '-' || v === '.') { setDraft({ ...draft, [k]: v as any }); return; }
+                      const n = parseFloat(v);
+                      setDraft({ ...draft, [k]: isNaN(n) ? 0 : n });
+                    }}
+                    className="flex-1 min-w-0 bg-gray-900 text-white rounded-lg px-2 py-2 text-sm font-mono border border-gray-700 focus:outline-none focus:border-yellow-600"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setDraft({ ...draft, [k]: -((draft as any)[k]) })}
+                    className="px-2 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-gray-300 text-lg font-bold leading-none active:bg-gray-500"
+                  >±</button>
+                </div>
               </div>
             ))}
           </div>
