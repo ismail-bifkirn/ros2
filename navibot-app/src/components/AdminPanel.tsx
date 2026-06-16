@@ -1,18 +1,24 @@
+// Panneau d'administration pour la gestion des salles de destination
+// Permet d'ajouter, modifier, supprimer, exporter et importer les salles
+// Peut récupérer la position actuelle du robot pour définir une salle
+
 import { useState } from 'react';
 import { useRoomsStore } from '../store/roomsStore';
 import { getRobotPose }  from '../ros/navigation';
 import type { Room } from '../types';
 
+// Un brouillon (draft) est une salle sans ID (ou avec ID pour l'édition)
 type Draft = Omit<Room, 'id'> & { id?: string };
 const blank = (): Draft => ({ name: '', x: 0, y: 0, yaw: 0, icon: '📍' });
 
 export default function AdminPanel() {
   const { rooms, addRoom, updateRoom, deleteRoom } = useRoomsStore();
-  const [draft,      setDraft]      = useState<Draft | null>(null);
-  const [fetching,   setFetching]   = useState(false);
-  const [poseErr,    setPoseErr]    = useState('');
-  const [exportJSON, setExportJSON] = useState('');
+  const [draft,      setDraft]      = useState<Draft | null>(null);  // salle en cours d'édition
+  const [fetching,   setFetching]   = useState(false);                // chargement de la pose
+  const [poseErr,    setPoseErr]    = useState('');                   // erreur de récupération pose
+  const [exportJSON, setExportJSON] = useState('');                   // texte JSON d'export (fallback)
 
+  // Sauvegarde : ajout ou modification selon que draft a un ID
   const save = () => {
     if (!draft?.name.trim()) return;
     const data = { ...draft, x: +draft.x || 0, y: +draft.y || 0, yaw: +draft.yaw || 0 };
@@ -25,6 +31,7 @@ export default function AdminPanel() {
     setDraft(null);
   };
 
+  // Récupère la position actuelle du robot via TF et remplit le formulaire
   const useCurrent = async () => {
     setPoseErr('');
     setFetching(true);

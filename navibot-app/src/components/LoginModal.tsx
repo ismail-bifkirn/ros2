@@ -1,3 +1,7 @@
+// Modale d'authentification admin (accès protégé par PIN)
+// Vérifie le code PIN saisi via le store d'authentification
+// Affiche une erreur si le PIN est incorrect
+
 import { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 
@@ -5,10 +9,11 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
   const [pin, setPin] = useState('');
   const { enterAdmin, loginError } = useAuthStore();
 
+  // Soumission du formulaire : tente l'authentification, efface le champ si erreur
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (enterAdmin(pin)) onClose();
-    else setPin('');
+    else setPin('');  // efface le PIN pour réessayer
   };
 
   return (

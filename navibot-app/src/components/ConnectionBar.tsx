@@ -1,6 +1,11 @@
+// Barre de connexion WebSocket affichée en haut de l'écran
+// Affiche un point coloré (vert/jaune/gris/rouge) + l'URL
+// Permet de configurer l'URL ou de se déconnecter
+
 import { useState } from 'react';
 import { useConnectionStore } from '../store/connectionStore';
 
+// Classes Tailwind pour le point de statut (couleur + animation)
 const DOT: Record<string, string> = {
   connected:    'bg-green-400',
   connecting:   'bg-yellow-400 animate-pulse',
@@ -8,6 +13,7 @@ const DOT: Record<string, string> = {
   error:        'bg-red-500 animate-pulse',
 };
 
+// Libellés textuels pour chaque état
 const LABEL: Record<string, string> = {
   connected:    'Connected',
   connecting:   'Connecting…',
@@ -18,10 +24,11 @@ const LABEL: Record<string, string> = {
 export default function ConnectionBar() {
   const { status, url, errorMsg, connect, disconnect } = useConnectionStore();
   const [editUrl, setEditUrl] = useState(url);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // modale de configuration ouverte ?
 
   return (
     <>
+      {/* Barre de statut */}
       <div className="bg-gray-900 border-b border-gray-800 px-4 py-2 flex items-center gap-2 text-sm">
         <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${DOT[status]}`} />
         <span className="text-gray-400 flex-1 truncate">
@@ -32,11 +39,12 @@ export default function ConnectionBar() {
           <span className="text-red-400 text-xs truncate max-w-[200px]" title={errorMsg}>{errorMsg}</span>
         )}
         {status === 'connected'
-          ? <button onClick={disconnect}         className="text-red-400  hover:text-red-300  text-xs shrink-0">Disconnect</button>
+          ? <button onClick={disconnect} className="text-red-400 hover:text-red-300 text-xs shrink-0">Disconnect</button>
           : <button onClick={() => setOpen(true)} className="text-blue-400 hover:text-blue-300 text-xs shrink-0">Configure</button>
         }
       </div>
 
+      {/* Modale de configuration de l'URL */}
       {open && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-sm space-y-4">

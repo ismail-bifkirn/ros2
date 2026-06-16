@@ -1,3 +1,9 @@
+# Fichier de lancement Nav2 pour le robot NaviBot
+# Démarre la localisation (AMCL), la navigation (Nav2), RViz
+# Tous les nœuds sont forcés à use_sim_time:=true pour la simulation Gazebo
+# Le collision_monitor a été retiré car ses polygones étaient désactivés
+# et son lifecycle_manager restait bloqué indéfiniment
+
 import os
 from launch import LaunchDescription
 from launch.actions import (
@@ -14,23 +20,24 @@ from ament_index_python.packages import get_package_share_directory
 
 
 def generate_launch_description():
-    # ====== PACKAGES ======
+    # Chemins des packages ROS
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
     navibot_dir = get_package_share_directory('navibot_description')
     
-    # ====== FICHIERS ======
+    # Fichiers de configuration
     localization_launch = os.path.join(nav2_bringup_dir, 'launch', 'localization_launch.py')
     navigation_launch = os.path.join(nav2_bringup_dir, 'launch', 'navigation_launch.py')
     nav2_params = os.path.join(navibot_dir, 'config', 'nav2_params.yaml')
     rviz_config = os.path.join(navibot_dir, 'rviz', 'navibot.rviz')
     default_map = os.path.join(navibot_dir, 'maps', 'ma_carte.yaml')
 
-    # ====== ⭐ ACTION CRITIQUE : FORCER L'ENVIRONNEMENT ⭐ ======
+    # Force use_sim_time sur tous les nœuds via variable d'environnement
     set_sim_time_env = SetEnvironmentVariable(
         name='ROS_ARGUMENTS',
         value='-p use_sim_time:=true'
     )
 
+    # Argument de lancement use_sim_time (défaut: true)
     declare_use_sim_time = DeclareLaunchArgument(
         'use_sim_time',
         default_value='true',
@@ -40,22 +47,22 @@ def generate_launch_description():
     declare_map = DeclareLaunchArgument(
         'map',
         default_value=default_map,
-        description='Path to map'
+        description='Path to map YAML file'
     )
     
     declare_log_level = DeclareLaunchArgument(
         'log_level',
         default_value='error',
-        description='Logging level'
+        description='ROS logging level'
     )
     
     declare_rviz = DeclareLaunchArgument(
         'rviz',
         default_value='true',
-        description='Launch RViz with forced sim_time'
+        description='Launch RViz visualization'
     )
 
-    # ====== ⭐ RVIZ AVEC USE_SIM_TIME FORCÉ ⭐ ======
+    # Nœud RViz2 avec use_sim_time forcé
     rviz_node = Node(
         condition=IfCondition(LaunchConfiguration('rviz')),
         package='rviz2',
@@ -65,13 +72,11 @@ def generate_launch_description():
             '-d', rviz_config,
             '--ros-args', '-p', 'use_sim_time:=true'
         ],
-        parameters=[{
-            'use_sim_time': True  
-        }],
+        parameters=[{'use_sim_time': True}],
         output='screen'
     )
 
-    # ====== LOCALIZATION ======
+    # Inclusion du lancement de localisation (AMCL + map_server)
     start_localization = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(localization_launch),
         launch_arguments={
@@ -83,7 +88,7 @@ def generate_launch_description():
         }.items()
     )
 
-    # ====== NAVIGATION ======
+    # Inclusion du lancement de navigation (BT Navigator, controller, planner, costmaps)
     start_navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(navigation_launch),
         launch_arguments={
@@ -102,12 +107,11 @@ def generate_launch_description():
         declare_log_level,
         declare_rviz,
         
-        LogInfo(msg='⏱️ Lancement Nav2 avec use_sim_time:=true (FORCÉ)'),
-        LogInfo(msg='👁️ Anticollision basse active via LiDAR 2D incliné (/scan_obstacles_bas)'),
+        LogInfo(msg='Lancement Nav2 avec use_sim_time:=true (FORCÉ)'),
         
         start_localization,
         start_navigation,
         rviz_node,
 
-        LogInfo(msg='✅ Nav2 + Collision Monitor prêts !'),
+        LogInfo(msg='Nav2 prêt !'),
     ])

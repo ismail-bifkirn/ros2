@@ -1,5 +1,10 @@
+// Composant d'affichage du statut de navigation
+// Barre colorée qui indique l'état actuel : idle, navigating, succeeded, failed, cancelled
+// Affiche un bouton Cancel quand la navigation est en cours
+
 import { useNavStore } from '../store/navStore';
 
+// Classes Tailwind pour chaque état (couleur de fond + texte)
 const STYLES: Record<string, string> = {
   idle:       'bg-gray-800/60 text-gray-500',
   navigating: 'bg-blue-950   text-blue-300',
@@ -11,6 +16,7 @@ const STYLES: Record<string, string> = {
 export default function NavStatus() {
   const { status, cancelGoal } = useNavStore();
 
+  // Message textuel selon l'état de navigation
   const msg =
     status.type === 'idle'
       ? '— Awaiting navigation goal'

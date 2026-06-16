@@ -1,10 +1,14 @@
+// Panneau de sélection de salle pour la navigation autonome
+// Affiche les salles sous forme de grille de boutons
+// Envoie un objectif NavigateToPose au robot lors du clic
+
 import { useRoomsStore } from '../store/roomsStore';
 import { useNavStore }   from '../store/navStore';
 
 export default function RoomPanel() {
   const rooms = useRoomsStore((s) => s.rooms);
   const { sendGoal, status } = useNavStore();
-  const busy = status.type === 'navigating';
+  const busy = status.type === 'navigating';  // désactive les boutons pendant la navigation
 
   if (rooms.length === 0) {
     return (
