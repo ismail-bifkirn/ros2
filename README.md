@@ -1,5 +1,5 @@
 [README.md](https://github.com/user-attachments/files/32435839/README.md)
-# Navibot — ROS2
+# Navibot — ROS2 humble
 
 Projet robotique mobile combinant un système **ROS2** (description et navigation du robot) et une **application Android/mobile** de contrôle, avec communication en temps réel via WebSocket (rosbridge).
 
